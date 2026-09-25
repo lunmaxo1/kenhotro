@@ -12,7 +12,7 @@ window.SITE_CONFIG = {
     'https://discord.gg/JQAEHFSmXr',
 
   maintenance: {
-    enabled: true,
+    enabled: false,
 
     mode: 'banner',
 
@@ -35,7 +35,7 @@ window.SITE_CONFIG = {
       'Thông báo quan trọng',
 
     message:
-      'Hiện tại còn nhiều lỗi nên sẽ bảo trì.',
+      'web chỉ hỗ trợ thông báo , show code mới nhất. Vui lòng sử dụng hợp lí.',
 
     detail: '',
 
