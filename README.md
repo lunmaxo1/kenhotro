@@ -1,35 +1,187 @@
-KENTHONGBAO - WEBSITE THÔNG BÁO
+KENTHONGBAO — STATIC UPDATE CENTER
 
-1) TÊN / LINK / DISCORD
-- Mở: data/config.js
-- siteName: tên website.
-- brand: tên hiển thị ở header/footer.
-- siteUrl: URL hiện tại của website.
-- discordUrl: link server Discord.
-- supportUrl: link kênh/server hỗ trợ.
+1) TÊN VÀ LINK
 
-2) THÊM BÀI THÔNG BÁO
-- Mở: data/updates.js
-- Thêm một object mới vào mảng window.UPDATE_POSTS.
-- Các trường nên dùng: id, title, version, date, type, status, priority, tags, summary, changes, content.
-- date dùng định dạng YYYY-MM-DD.
-- status: published để hiển thị; archived để ẩn khỏi danh sách.
-- priority: high để đưa bài vào khu vực Cập nhật quan trọng.
+Mở:
+data/config.js
 
-3) GIAO DIỆN
-- assets/style.css: màu sắc, khoảng cách, card, responsive.
-- assets/favicon.svg: biểu tượng favicon của KenThongBao.
+Các trường:
 
-4) DEPLOY
-- Đây là website tĩnh, không cần Node.js, Python hay database để chạy phần giao diện.
-- Khi sửa file và push lên GitHub, Cloudflare Pages sẽ cập nhật theo cấu hình deploy của project.
-- URL hiện tại: https://kenhotro.pages.dev/
+siteName
+brand
+discordUrl
+supportUrl
 
-5) CẤU TRÚC
-index.html
+Dùng để đổi tên website và các liên kết.
+
+2) THÊM UPDATE
+
+Mở:
+
+data/updates.js
+
+Thêm object mới vào đầu mảng:
+
+window.UPDATE_POSTS
+
+Khuyến nghị version:
+
+v2.3.1
+v2.3.2
+v2.4.0
+v3.0.0
+
+Ngày dùng:
+
+YYYY-MM-DD
+
+3) LOẠI UPDATE
+
+FEATURE
+IMPROVEMENT
+FIX
+RELEASE
+SECURITY
+ANNOUNCEMENT
+
+4) ƯU TIÊN
+
+high
+normal
+
+Dùng:
+
+high
+
+cho update quan trọng.
+
+5) TRẠNG THÁI
+
+published
+
+Hiển thị trên website.
+
+draft
+
+Không hiển thị.
+
+archived
+
+Không hiển thị.
+
+6) THÔNG BÁO QUAN TRỌNG
+
+Mở:
+
+data/config.js
+
+Tìm:
+
+importantNotice
+
+Đổi:
+
+enabled: false
+
+thành:
+
+enabled: true
+
+Sau đó sửa:
+
+type
+title
+message
+detail
+updateId
+
+7) CHẾ ĐỘ BẢO TRÌ
+
+Mở:
+
+data/config.js
+
+Tìm:
+
+maintenance
+
+Đổi:
+
+enabled: false
+
+thành:
+
+enabled: true
+
+Sau đó chỉnh:
+
+title
+message
+detail
+
+8) GIAO DIỆN
+
+Mở:
+
 assets/style.css
+
+Các biến màu nằm ở đầu file.
+
+9) JAVASCRIPT
+
+File chính:
+
 assets/app.js
+
+File này xử lý:
+
+- tìm kiếm
+- lọc
+- sắp xếp
+- timeline
+- modal
+- share
+- copy link
+- FAQ
+- animation
+- maintenance
+- important notice
+
+10) DEPLOY
+
+Website là static site.
+
+Không cần:
+
+Node.js
+Python
+Database
+Backend
+
+Có thể deploy trực tiếp lên Cloudflare Pages.
+
+11) CẤU TRÚC
+
+index.html
+404.html
+robots.txt
+sitemap.xml
+README.txt
+
+assets/app.js
+assets/style.css
 assets/favicon.svg
+
 data/config.js
 data/updates.js
-README.txt
+
+12) QUY TẮC UPDATE
+
+Mỗi lần nâng cấp website:
+
+1. Sửa chức năng.
+2. Cập nhật giao diện nếu cần.
+3. Thêm changelog mới vào data/updates.js.
+4. Tăng version.
+5. Commit lên GitHub.
+6. Cloudflare Pages tự deploy bản mới.
