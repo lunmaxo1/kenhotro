@@ -27,7 +27,7 @@ window.SITE_CONFIG = {
   },
 
   importantNotice: {
-    enabled: false,
+    enabled: true,
 
     type: 'WARNING',
 
@@ -35,7 +35,7 @@ window.SITE_CONFIG = {
       'Thông báo quan trọng',
 
     message:
-      'Chưa có thông báo khẩn nào đang hoạt động.',
+      'Hiện tại còn nhiều lỗi nên sẽ bảo trì.',
 
     detail: '',
 
