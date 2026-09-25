@@ -1,39 +1,38 @@
 window.UPDATE_POSTS = [
   {
     id: 'update-2026-09-25-210',
-    title: 'kenz Support 2.1.0 chính thức cập nhật',
+    title: 'KenThongBao 2.1.0 chính thức cập nhật',
     version: 'v2.1.0',
     date: '2026-09-25',
     type: 'FEATURE',
     status: 'published',
     priority: 'high',
-    tags: ['Support', 'Discord', 'Troubleshooter'],
-    summary: 'Ra mắt Update Center mới, cải thiện Support Center và Smart Troubleshooter.',
+    tags: ['Website', 'Thông báo', 'Troubleshooter'],
+    summary: 'Nâng cấp trung tâm thông báo, giao diện và hệ thống hiển thị cập nhật.',
     changes: [
-      'Làm mới giao diện Support Center.',
-      'Bổ sung Update Center.',
-      'Cải thiện Smart Troubleshooter.',
-      'Tối ưu giao diện điện thoại.',
-      'Cải thiện tốc độ tải nội dung.'
+      'Làm mới giao diện trung tâm thông báo.',
+      'Bổ sung khu vực nổi bật cho cập nhật quan trọng.',
+      'Cải thiện tìm kiếm và bộ lọc bài viết.',
+      'Tối ưu hiển thị trên điện thoại.',
+      'Cải thiện cấu trúc dữ liệu để dễ thêm update mới.'
     ],
     content: `
 ### Có gì mới?
 
-- Trung tâm cập nhật phiên bản mới.
-- Hiển thị phiên bản, ngày phát hành, loại và mức độ cập nhật.
-- Smart Troubleshooter được tổ chức lại.
-- Tối ưu giao diện trên điện thoại và máy tính.
+- Trung tâm thông báo được tổ chức lại theo hướng rõ ràng và dễ đọc hơn.
+- Cập nhật quan trọng được đưa lên khu vực nổi bật.
+- Có thể tìm kiếm theo tiêu đề, phiên bản, nội dung hoặc tag.
+- Giao diện được tối ưu cho cả điện thoại và máy tính.
 
-### Hệ thống
+### Dữ liệu
 
-Website hoạt động dưới dạng static site và có thể deploy trên Cloudflare Pages.
+Các bài viết được quản lý trong file \`data/updates.js\`. Chỉ cần thêm một object mới là có thể đăng thông báo tiếp theo.
 
 ### Lưu ý
 
-Nếu phát hiện lỗi, hãy gửi thông tin lỗi kèm phiên bản đang sử dụng để được hỗ trợ.
+Bản cập nhật này tập trung vào phần hiển thị và quản lý nội dung của website.
     `.trim()
   },
-
   {
     id: 'update-2026-09-18-204',
     title: 'Cải thiện hệ thống hướng dẫn Discord Bot',
@@ -43,28 +42,27 @@ Nếu phát hiện lỗi, hãy gửi thông tin lỗi kèm phiên bản đang s�
     status: 'published',
     priority: 'normal',
     tags: ['Discord', 'Node.js', 'Bot'],
-    summary: 'Bổ sung hướng dẫn npm, dotenv, slash commands và deploy bot.',
+    summary: 'Bổ sung hướng dẫn npm, dotenv, slash commands và các bước kiểm tra trước khi deploy.',
     changes: [
       'Bổ sung hướng dẫn xử lý package bị thiếu.',
       'Thêm checklist slash commands.',
       'Bổ sung kiểm tra biến môi trường.',
       'Cải thiện hướng dẫn deploy.',
-      'Cải thiện cấu trúc tài liệu.'
+      'Sắp xếp lại tài liệu theo từng nhóm lỗi.'
     ],
     content: `
 ### Thay đổi
 
 - Hướng dẫn xử lý lỗi npm và package.
 - Checklist trước khi deploy Discord Bot.
-- Hướng dẫn kiểm tra file .env.
+- Hướng dẫn kiểm tra file \`.env\` và biến môi trường.
 - Cải thiện phần slash commands.
 
 ### Mục tiêu
 
-Giúp người dùng dễ xác định lỗi trước khi liên hệ hỗ trợ.
+Giúp người dùng xác định lỗi nhanh hơn trước khi liên hệ hỗ trợ.
     `.trim()
   },
-
   {
     id: 'update-2026-09-11-203',
     title: 'Bản vá hệ thống trạng thái dịch vụ',
@@ -74,10 +72,10 @@ Giúp người dùng dễ xác định lỗi trước khi liên hệ hỗ trợ.
     status: 'published',
     priority: 'normal',
     tags: ['Discord', 'Status', 'Fix'],
-    summary: 'Sửa lỗi trạng thái dịch vụ hiển thị dữ liệu cũ hoặc không đồng bộ.',
+    summary: 'Sửa các trường hợp trạng thái dịch vụ hiển thị dữ liệu cũ hoặc không đồng bộ.',
     changes: [
       'Cải thiện đồng bộ trạng thái.',
-      'Giảm dữ liệu cache cũ.',
+      'Giảm trường hợp dữ liệu cache cũ.',
       'Tối ưu tải dữ liệu.',
       'Cải thiện xử lý khi dữ liệu không khả dụng.'
     ],
@@ -89,41 +87,36 @@ Giúp người dùng dễ xác định lỗi trước khi liên hệ hỗ trợ.
 - Tối ưu quá trình tải thông tin trạng thái.
     `.trim()
   },
-
   {
     id: 'release-2026-09-01-200',
-    title: 'kenz Support chính thức ra mắt',
+    title: 'KenThongBao chính thức ra mắt',
     version: 'v2.0.0',
     date: '2026-09-01',
     type: 'RELEASE',
     status: 'published',
     priority: 'high',
-    tags: ['Release', 'Support'],
-    summary: 'Ra mắt Support Center với FAQ, Update Center và Troubleshooter.',
+    tags: ['Release', 'Website', 'Thông báo'],
+    summary: 'Ra mắt website tập trung cho thông báo, cập nhật phiên bản và thông tin hỗ trợ.',
     changes: [
-      'Ra mắt Support Center.',
-      'Ra mắt Update Center.',
+      'Ra mắt trung tâm thông báo.',
+      'Bổ sung khu vực cập nhật phiên bản.',
       'Bổ sung FAQ.',
-      'Bổ sung Troubleshooter.',
-      'Hỗ trợ responsive.',
-      'Hỗ trợ static hosting.'
+      'Hỗ trợ tìm kiếm và lọc bài viết.',
+      'Hỗ trợ giao diện responsive.',
+      'Tổ chức dữ liệu theo file để dễ cập nhật.'
     ],
     content: `
 ### Ra mắt
 
-kenz Support chính thức hoạt động với hệ thống tài liệu, thông báo cập nhật và hỗ trợ xử lý sự cố.
+KenThongBao chính thức hoạt động với mục tiêu tập trung thông báo, phiên bản mới, thay đổi quan trọng và thông tin hỗ trợ.
 
 ### Thành phần
 
-- Support Center
+- Notification Center
 - Update Center
 - FAQ
-- Troubleshooter
+- Bộ lọc và tìm kiếm
 - Responsive UI
-
-### Triển khai
-
-Website được xây dựng theo hướng static site và phù hợp triển khai trên Cloudflare Pages.
     `.trim()
   }
 ];
