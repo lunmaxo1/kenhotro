@@ -1,4 +1,123 @@
 window.UPDATE_POSTS = [
+{
+  id: 'update-2026-09-25-221',
+  title: 'KenThongBao sửa lỗi giao diện và tối ưu Update Center',
+  version: 'v2.2.1',
+  date: '2026-09-25',
+  type: 'FIX',
+  status: 'published',
+  priority: 'high',
+
+  tags: [
+    'KenThongBao',
+    'UI',
+    'Responsive',
+    'Update Center',
+    'Fix',
+    'Mobile'
+  ],
+
+  summary:
+    'Sửa lỗi giao diện do thiếu CSS, hoàn thiện responsive và ổn định hệ thống hiển thị cập nhật trên máy tính và điện thoại.',
+
+  changes: [
+    'Khôi phục và hoàn thiện stylesheet chính của website.',
+    'Sửa lỗi giao diện do file assets/style.css bị thiếu nhiều phần.',
+    'Bổ sung đầy đủ layout cho header và navigation.',
+    'Bổ sung layout cho Hero và Terminal Card.',
+    'Bổ sung hiển thị Stats Card.',
+    'Bổ sung giao diện Update Center.',
+    'Bổ sung giao diện Featured Update.',
+    'Bổ sung style cho Update Card.',
+    'Bổ sung giao diện Support Card.',
+    'Bổ sung giao diện FAQ.',
+    'Bổ sung giao diện modal xem chi tiết cập nhật.',
+    'Bổ sung trạng thái hidden cho các thành phần cần ẩn/hiện.',
+    'Cải thiện giao diện menu trên điện thoại.',
+    'Tối ưu responsive cho tablet và mobile.',
+    'Cải thiện hover, focus và trạng thái tương tác.',
+    'Sửa fallback FAQ trong app.js từ object thành array.',
+    'Giữ nguyên dữ liệu và cấu trúc các bản cập nhật hiện có.',
+    'Tối ưu hiển thị Update Center trên nhiều kích thước màn hình.'
+  ],
+
+  content: `
+### Có gì mới?
+
+KenThongBao đã được sửa và tối ưu lại giao diện sau khi phát hiện stylesheet chính bị thiếu nhiều thành phần quan trọng.
+
+### Sửa lỗi giao diện
+
+Đã khôi phục các phần CSS cần thiết cho:
+
+- Header và navigation.
+- Hero section.
+- Terminal card.
+- Stats.
+- Update Center.
+- Featured Update.
+- Update Card.
+- Trung tâm hỗ trợ.
+- FAQ.
+- Contact.
+- Footer.
+- Modal chi tiết cập nhật.
+
+### Responsive
+
+Giao diện hiện được tối ưu lại cho:
+
+- Máy tính.
+- Laptop.
+- Tablet.
+- Điện thoại.
+
+Đặc biệt bổ sung lại menu mobile và cách hiển thị các card khi màn hình nhỏ.
+
+### Update Center
+
+Hệ thống cập nhật hiện được hiển thị đầy đủ hơn với:
+
+- Search.
+- Filter.
+- Sort.
+- Featured Update.
+- Update Cards.
+- Modal đọc chi tiết.
+- Tag.
+- Priority.
+- Date.
+- Version.
+
+### Sửa JavaScript
+
+Đã sửa lỗi fallback FAQ trong \`assets/app.js\`.
+
+Trước đây:
+
+\`\`\`js
+const faqs = Array.isArray(cfg.faq) ? cfg.faq : {};
+\`\`\`
+
+Đã sửa thành:
+
+\`\`\`js
+const faqs = Array.isArray(cfg.faq) ? cfg.faq : [];
+\`\`\`
+
+Điều này đảm bảo \`forEach()\` luôn được gọi trên array hợp lệ.
+
+### Tương thích
+
+Không thay đổi cấu trúc dữ liệu của \`data/updates.js\`.
+
+Các bản update cũ vẫn được giữ nguyên và bản cập nhật mới này chỉ bổ sung thêm thông tin về việc sửa lỗi giao diện.
+
+### Ghi chú
+
+Đây là bản cập nhật tập trung vào việc sửa lỗi giao diện, responsive và ổn định hệ thống Update Center của KenThongBao.
+  `.trim()
+},
   {
   id: 'update-2026-09-25-220',
   title: 'KenThongBao cập nhật hệ thống thông báo',
