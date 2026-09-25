@@ -12,7 +12,7 @@ window.SITE_CONFIG = {
     'https://discord.gg/JQAEHFSmXr',
 
   maintenance: {
-    enabled: false,
+    enabled: true,
 
     mode: 'banner',
 
