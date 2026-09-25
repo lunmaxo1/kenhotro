@@ -1,413 +1,459 @@
 (() => {
-  const cfg = window.SITE_CONFIG || {};
-  const posts = Array.isArray(window.UPDATE_POSTS) ? window.UPDATE_POSTS : [];
-  const faqs = Array.isArray(cfg.faq) ? cfg.faq : [];
+  'use strict';
 
-  const $ = (s) => document.querySelector(s);
+  const cfg =
+    window.SITE_CONFIG || {};
 
-  document.title = cfg.siteName || 'KenThongBao';
+  const posts =
+    Array.isArray(window.UPDATE_POSTS)
+      ? window.UPDATE_POSTS
+      : [];
 
-  setText('#brandName', cfg.brand || cfg.siteName || 'KenThongBao');
-  setText('#footerName', cfg.siteName || 'KenThongBao');
-  setText('#copyrightName', cfg.brand || cfg.siteName || 'KenThongBao');
-  setText('#footerDesc', cfg.description || 'Thông báo & cập nhật.');
+  const faqs =
+    Array.isArray(cfg.faq)
+      ? cfg.faq
+      : [];
 
-  setLink('#discordLink', cfg.discordUrl);
-  setLink('#inviteCard', cfg.discordUrl);
-  setLink('#contactCard', cfg.supportUrl || cfg.discordUrl);
-  setLink('#contactBtn', cfg.supportUrl || cfg.discordUrl);
+  const $ =
+    (selector) =>
+      document.querySelector(
+        selector
+      );
 
-  setText('#year', new Date().getFullYear());
+  let activeFilter =
+    'Tất cả';
 
-  const sortedBase = [...posts]
-    .filter(
-      (p) =>
-        p &&
-        p.status !== 'archived' &&
-        p.status !== 'draft'
-    )
-    .sort(
-      (a, b) =>
-        dateValue(b.date) -
-        dateValue(a.date)
-    );
+  let activeTag =
+    '';
 
-  const allTags = [
-    ...new Set(
-      sortedBase.flatMap((p) =>
-        Array.isArray(p.tags)
-          ? p.tags
-          : []
+  const visiblePosts =
+    posts
+      .filter(
+        (post) =>
+          post &&
+          post.status !== 'draft' &&
+          post.status !== 'archived'
       )
-    ),
-  ].sort((a, b) =>
-    a.localeCompare(b, 'vi')
-  );
-
-  setText('#updateCount', sortedBase.length);
-  setText('#statUpdates', sortedBase.length);
-  setText('#statTopics', allTags.length);
-
-  const latest = sortedBase[0];
-
-  if (latest) {
-    setText(
-      '#latestVersion',
-      latest.version || 'latest'
-    );
-
-    setText(
-      '#latestType',
-      latest.type || 'UPDATE'
-    );
-
-    setText(
-      '#statVersion',
-      latest.version || 'latest'
-    );
-
-    setText(
-      '#lastUpdated',
-      'Cập nhật ' +
-        formatDate(latest.date)
-    );
-  } else {
-    setText('#statVersion', '—');
-    setText(
-      '#lastUpdated',
-      'Chưa có cập nhật'
-    );
-  }
-
-  renderFeatured(
-    findImportantPost() || latest
-  );
-
-  const filters = $('#filters');
-
-  let activeFilter = 'Tất cả';
-  let activeTag = '';
-
-  const filterNames = [
-    'Tất cả',
-    ...new Set(
-      sortedBase
-        .map((p) => p.type)
-        .filter(Boolean)
-    ),
-  ];
-
-  filterNames.forEach((name) => {
-    const button =
-      document.createElement('button');
-
-    button.type = 'button';
-
-    button.className =
-      'filter' +
-      (
-        name === activeFilter
-          ? ' active'
-          : ''
-      );
-
-    button.textContent = name;
-
-    button.addEventListener(
-      'click',
-      () => {
-        activeFilter = name;
-
-        [
-          ...filters.querySelectorAll(
-            '.filter'
-          ),
-        ].forEach((x) =>
-          x.classList.remove(
-            'active'
-          )
-        );
-
-        button.classList.add('active');
-
-        render();
-      }
-    );
-
-    filters.appendChild(button);
-  });
-
-  if (allTags.length) {
-    const tagSelect =
-      document.createElement('select');
-
-    tagSelect.className =
-      'tag-select';
-
-    tagSelect.id = 'tagSelect';
-
-    tagSelect.setAttribute(
-      'aria-label',
-      'Lọc theo chủ đề'
-    );
-
-    tagSelect.innerHTML =
-      '<option value="">Tất cả chủ đề</option>' +
-      allTags
-        .map(
-          (tag) =>
-            `<option value="${escapeAttr(
-              tag
-            )}">${escapeHtml(
-              tag
-            )}</option>`
-        )
-        .join('');
-
-    tagSelect.addEventListener(
-      'change',
-      () => {
-        activeTag =
-          tagSelect.value;
-
-        render();
-      }
-    );
-
-    filters.appendChild(tagSelect);
-  }
-
-  $('#searchInput').addEventListener(
-    'input',
-    render
-  );
-
-  $('#sortSelect').addEventListener(
-    'change',
-    render
-  );
-
-  $('#clearSearch').addEventListener(
-    'click',
-    () => {
-      $('#searchInput').value = '';
-
-      if ($('#tagSelect')) {
-        $('#tagSelect').value = '';
-      }
-
-      activeTag = '';
-
-      $('#sortSelect').value =
-        'newest';
-
-      activeFilter =
-        'Tất cả';
-
-      [
-        ...filters.querySelectorAll(
-          '.filter'
-        ),
-      ].forEach((x) =>
-        x.classList.toggle(
-          'active',
-          x.textContent === 'Tất cả'
-        )
-      );
-
-      render();
-
-      $('#searchInput').focus();
-    }
-  );
-
-  render();
-  renderFaq();
-  openFromHash();
-
-  window.addEventListener(
-    'hashchange',
-    openFromHash
-  );
-
-  window.addEventListener(
-    'keydown',
-    (e) => {
-      if (e.key === 'Escape') {
-        closePost();
-      }
-
-      if (
-        e.key === '/' &&
-        document.activeElement !==
-          $('#searchInput') &&
-        !isTypingTarget(e.target)
-      ) {
-        e.preventDefault();
-
-        $('#searchInput').focus();
-      }
-    }
-  );
-
-  $('#menuBtn').onclick = () => {
-    const nav = $('.nav');
-
-    const open =
-      nav.classList.toggle('open');
-
-    $('#menuBtn').setAttribute(
-      'aria-expanded',
-      String(open)
-    );
-  };
-
-  document
-    .querySelectorAll('.nav-links a')
-    .forEach((link) => {
-      link.addEventListener(
-        'click',
-        () => {
-          $('.nav').classList.remove(
-            'open'
-          );
-
-          $('#menuBtn').setAttribute(
-            'aria-expanded',
-            'false'
-          );
-        }
-      );
-    });
-
-  $('#modalClose').onclick = () => {
-    closePost();
-  };
-
-  $('.modal-backdrop').onclick = () => {
-    closePost();
-  };
-
-  $('#backTop').onclick = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
-  function render() {
-    const query =
-      $('#searchInput')
-        .value
-        .trim()
-        .toLowerCase();
-
-    const sort =
-      $('#sortSelect').value;
-
-    let list =
-      sortedBase.filter((p) => {
-        const tags =
-          Array.isArray(p.tags)
-            ? p.tags
-            : [];
-
-        const changes =
-          Array.isArray(p.changes)
-            ? p.changes
-            : [];
-
-        const hay = [
-          p.title,
-          p.summary,
-          p.content,
-          p.version,
-          p.type,
-          ...tags,
-          ...changes,
-        ]
-          .join(' ')
-          .toLowerCase();
-
-        const matchesType =
-          activeFilter === 'Tất cả' ||
-          p.type === activeFilter;
-
-        const matchesTag =
-          !activeTag ||
-          tags.includes(activeTag);
-
-        const matchesSearch =
-          !query ||
-          hay.includes(query);
-
-        return (
-          matchesType &&
-          matchesTag &&
-          matchesSearch
-        );
-      });
-
-    if (sort === 'oldest') {
-      list.sort(
-        (a, b) =>
-          dateValue(a.date) -
-          dateValue(b.date)
-      );
-    }
-
-    if (sort === 'important') {
-      list.sort(
-        (a, b) =>
-          priorityScore(b) -
-            priorityScore(a) ||
-          dateValue(b.date) -
-            dateValue(a.date)
-      );
-    }
-
-    if (sort === 'newest') {
-      list.sort(
+      .sort(
         (a, b) =>
           dateValue(b.date) -
           dateValue(a.date)
       );
-    }
 
-    const grid =
-      $('#updatesGrid');
+  const allTags = [
+    ...new Set(
+      visiblePosts.flatMap(
+        (post) =>
+          Array.isArray(post.tags)
+            ? post.tags
+            : []
+      )
+    )
+  ].sort((a, b) =>
+    a.localeCompare(
+      b,
+      'vi'
+    )
+  );
 
-    grid.innerHTML = '';
+  const typeFilters = [
+    'Tất cả',
+    ...new Set(
+      visiblePosts
+        .map(
+          (post) =>
+            post.type
+        )
+        .filter(Boolean)
+    )
+  ];
 
-    $('#emptyState').classList.toggle(
-      'hidden',
-      list.length !== 0
+  init();
+
+  function init() {
+    applyConfig();
+
+    applyMaintenance();
+
+    renderStats();
+
+    renderImportantNotice();
+
+    renderFeatured(
+      findImportantPost() ||
+      visiblePosts[0]
+    );
+
+    renderFilters();
+
+    renderUpdates();
+
+    renderTimeline();
+
+    renderFaq();
+
+    initMenu();
+
+    initModal();
+
+    initKeyboard();
+
+    initBackTop();
+
+    initAnimations();
+
+    openFromHash();
+
+    window.addEventListener(
+      'hashchange',
+      openFromHash
+    );
+  }
+
+  function applyConfig() {
+    document.title =
+      cfg.siteName ||
+      'KenThongBao';
+
+    setText(
+      '#brandName',
+      cfg.brand ||
+        cfg.siteName ||
+        'KenThongBao'
     );
 
     setText(
-      '#resultsMeta',
-      `${list.length} kết quả`
+      '#footerName',
+      cfg.siteName ||
+        'KenThongBao'
     );
 
-    $('#clearSearch').classList.toggle(
-      'hidden',
-      !query &&
-        !activeTag &&
-        activeFilter === 'Tất cả'
+    setText(
+      '#copyrightName',
+      cfg.brand ||
+        cfg.siteName ||
+        'KenThongBao'
     );
 
-    list.forEach((post) => {
-      grid.appendChild(
-        postCard(post)
+    setText(
+      '#footerDesc',
+      cfg.description ||
+        'Thông báo nhanh. Cập nhật rõ ràng.'
+    );
+
+    setLink(
+      '#discordLink',
+      cfg.discordUrl
+    );
+
+    setLink(
+      '#inviteCard',
+      cfg.discordUrl
+    );
+
+    setLink(
+      '#contactCard',
+      cfg.supportUrl ||
+        cfg.discordUrl
+    );
+
+    setLink(
+      '#contactBtn',
+      cfg.supportUrl ||
+        cfg.discordUrl
+    );
+
+    setText(
+      '#year',
+      new Date()
+        .getFullYear()
+    );
+  }
+
+  function applyMaintenance() {
+    const maintenance =
+      cfg.maintenance ||
+      {};
+
+    const bar =
+      $('#maintenanceBar');
+
+    if (
+      !maintenance.enabled ||
+      !bar
+    ) {
+      return;
+    }
+
+    document.body.classList.add(
+      'maintenance-active'
+    );
+
+    setText(
+      '#heroStatus',
+      'MAINTENANCE'
+    );
+
+    setText(
+      '#systemState',
+      'MAINTENANCE'
+    );
+
+    setText(
+      '#statStatusValue',
+      'MAINT'
+    );
+
+    setText(
+      '#statStatus',
+      'Bảo trì'
+    );
+
+    bar.classList.remove(
+      'hidden'
+    );
+
+    bar.innerHTML = `
+      <div class="maintenance-inner container">
+
+        <span
+          class="maintenance-pulse"
+          aria-hidden="true"
+        ></span>
+
+        <div>
+
+          <strong>
+            ${escapeHtml(
+              maintenance.title ||
+              'Website đang bảo trì'
+            )}
+          </strong>
+
+          <p>
+            ${escapeHtml(
+              maintenance.message ||
+              ''
+            )}
+          </p>
+
+        </div>
+
+        ${
+          maintenance.detail
+            ? `
+              <span class="maintenance-detail">
+                ${escapeHtml(
+                  maintenance.detail
+                )}
+              </span>
+            `
+            : ''
+        }
+
+      </div>
+    `;
+  }
+
+  function renderStats() {
+    setText(
+      '#updateCount',
+      visiblePosts.length
+    );
+
+    setText(
+      '#statUpdates',
+      visiblePosts.length
+    );
+
+    setText(
+      '#statTopics',
+      allTags.length
+    );
+
+    const latest =
+      visiblePosts[0];
+
+    if (!latest) {
+      setText(
+        '#latestVersion',
+        '—'
       );
-    });
+
+      setText(
+        '#latestType',
+        '—'
+      );
+
+      setText(
+        '#statVersion',
+        '—'
+      );
+
+      setText(
+        '#lastUpdated',
+        'Chưa có cập nhật'
+      );
+
+      return;
+    }
+
+    setText(
+      '#latestVersion',
+      latest.version ||
+        'latest'
+    );
+
+    setText(
+      '#latestType',
+      latest.type ||
+        'UPDATE'
+    );
+
+    setText(
+      '#statVersion',
+      latest.version ||
+        'latest'
+    );
+
+    setText(
+      '#lastUpdated',
+      `Cập nhật ${formatDate(
+        latest.date
+      )}`
+    );
+  }
+
+  function renderImportantNotice() {
+    const box =
+      $('#importantNotice');
+
+    const notice =
+      cfg.importantNotice ||
+      {};
+
+    if (
+      !box ||
+      !notice.enabled
+    ) {
+      return;
+    }
+
+    box.classList.remove(
+      'hidden'
+    );
+
+    box.innerHTML = `
+      <div
+        class="notice-card notice-${escapeAttr(
+          String(
+            notice.type ||
+            'WARNING'
+          ).toLowerCase()
+        )}"
+      >
+
+        <div class="notice-icon">
+          ${noticeIcon(
+            notice.type
+          )}
+        </div>
+
+        <div class="notice-content">
+
+          <div class="notice-kicker">
+            ${escapeHtml(
+              notice.type ||
+              'NOTICE'
+            )}
+          </div>
+
+          <h3>
+            ${escapeHtml(
+              notice.title ||
+              'Thông báo quan trọng'
+            )}
+          </h3>
+
+          <p>
+            ${escapeHtml(
+              notice.message ||
+              ''
+            )}
+          </p>
+
+          ${
+            notice.detail
+              ? `
+                <small>
+                  ${escapeHtml(
+                    notice.detail
+                  )}
+                </small>
+              `
+              : ''
+          }
+
+        </div>
+
+        ${
+          notice.updateId
+            ? `
+              <button
+                type="button"
+                class="notice-btn"
+                id="noticeUpdateBtn"
+              >
+                Xem chi tiết →
+              </button>
+            `
+            : ''
+        }
+
+      </div>
+    `;
+
+    if (
+      notice.updateId
+    ) {
+      const button =
+        $('#noticeUpdateBtn');
+
+      if (button) {
+        button.onclick =
+          () => {
+            const post =
+              visiblePosts.find(
+                (item) =>
+                  item.id ===
+                  notice.updateId
+              );
+
+            if (post) {
+              openPost(
+                post,
+                true
+              );
+            } else {
+              showToast(
+                'Không tìm thấy bài cập nhật được liên kết.'
+              );
+            }
+          };
+      }
+    }
   }
 
   function renderFeatured(post) {
     const box =
       $('#featuredUpdate');
 
-    if (!post) return;
+    if (
+      !box ||
+      !post
+    ) {
+      return;
+    }
 
     box.classList.remove(
       'hidden'
@@ -415,6 +461,7 @@
 
     box.innerHTML = `
       <div>
+
         <span class="featured-label">
           CẬP NHẬT QUAN TRỌNG
         </span>
@@ -427,17 +474,22 @@
 
         <p>
           ${escapeHtml(
-            post.summary || ''
+            post.summary ||
+            ''
           )}
         </p>
 
         <div class="featured-meta">
           ${escapeHtml(
-            post.version || 'UPDATE'
+            post.version ||
+            'UPDATE'
           )}
           ·
-          ${formatDate(post.date)}
+          ${formatDate(
+            post.date
+          )}
         </div>
+
       </div>
 
       <button
@@ -449,18 +501,383 @@
     `;
 
     box
-      .querySelector('button')
-      .onclick = () =>
-        openPost(post, true);
+      .querySelector(
+        'button'
+      )
+      .onclick =
+      () =>
+        openPost(
+          post,
+          true
+        );
+  }
+
+  function renderFilters() {
+    const box =
+      $('#filters');
+
+    if (!box) {
+      return;
+    }
+
+    box.innerHTML = '';
+
+    typeFilters.forEach(
+      (type) => {
+
+        const button =
+          document.createElement(
+            'button'
+          );
+
+        button.type =
+          'button';
+
+        button.className =
+          `filter${
+            type ===
+            activeFilter
+              ? ' active'
+              : ''
+          }`;
+
+        button.textContent =
+          type;
+
+        button.addEventListener(
+          'click',
+          () => {
+
+            activeFilter =
+              type;
+
+            box
+              .querySelectorAll(
+                '.filter'
+              )
+              .forEach(
+                (item) =>
+                  item.classList.remove(
+                    'active'
+                  )
+              );
+
+            button.classList.add(
+              'active'
+            );
+
+            renderUpdates();
+          }
+        );
+
+        box.appendChild(
+          button
+        );
+      }
+    );
+
+    if (
+      allTags.length
+    ) {
+
+      const select =
+        document.createElement(
+          'select'
+        );
+
+      select.id =
+        'tagSelect';
+
+      select.className =
+        'tag-select';
+
+      select.setAttribute(
+        'aria-label',
+        'Lọc theo chủ đề'
+      );
+
+      select.innerHTML =
+        '<option value="">Tất cả chủ đề</option>' +
+        allTags
+          .map(
+            (tag) =>
+              `
+                <option value="${escapeAttr(
+                  tag
+                )}">
+                  ${escapeHtml(
+                    tag
+                  )}
+                </option>
+              `
+          )
+          .join('');
+
+      select.value =
+        activeTag;
+
+      select.addEventListener(
+        'change',
+        () => {
+
+          activeTag =
+            select.value;
+
+          renderUpdates();
+
+        }
+      );
+
+      box.appendChild(
+        select
+      );
+    }
+
+    $('#searchInput')
+      .addEventListener(
+        'input',
+        renderUpdates
+      );
+
+    $('#sortSelect')
+      .addEventListener(
+        'change',
+        renderUpdates
+      );
+
+    $('#clearSearch')
+      .addEventListener(
+        'click',
+        clearFilters
+      );
+  }
+
+  function renderUpdates() {
+    const query =
+      (
+        $('#searchInput')
+          ?.value ||
+        ''
+      )
+        .trim()
+        .toLowerCase();
+
+    const sort =
+      $('#sortSelect')
+        ?.value ||
+      'newest';
+
+    let list =
+      visiblePosts.filter(
+        (post) => {
+
+          const tags =
+            Array.isArray(
+              post.tags
+            )
+              ? post.tags
+              : [];
+
+          const changes =
+            Array.isArray(
+              post.changes
+            )
+              ? post.changes
+              : [];
+
+          const hay =
+            [
+              post.title,
+              post.summary,
+              post.content,
+              post.version,
+              post.type,
+              ...tags,
+              ...changes
+            ]
+              .join(' ')
+              .toLowerCase();
+
+          return (
+            (
+              activeFilter ===
+                'Tất cả' ||
+              post.type ===
+                activeFilter
+            ) &&
+            (
+              !activeTag ||
+              tags.includes(
+                activeTag
+              )
+            ) &&
+            (
+              !query ||
+              hay.includes(
+                query
+              )
+            )
+          );
+        }
+      );
+
+    if (
+      sort ===
+      'oldest'
+    ) {
+
+      list.sort(
+        (a, b) =>
+          dateValue(
+            a.date
+          ) -
+          dateValue(
+            b.date
+          )
+      );
+
+    } else if (
+      sort ===
+      'important'
+    ) {
+
+      list.sort(
+        (a, b) =>
+          priorityScore(
+            b
+          ) -
+          priorityScore(
+            a
+          ) ||
+          dateValue(
+            b.date
+          ) -
+          dateValue(
+            a.date
+          )
+      );
+
+    } else {
+
+      list.sort(
+        (a, b) =>
+          dateValue(
+            b.date
+          ) -
+          dateValue(
+            a.date
+          )
+      );
+    }
+
+    const grid =
+      $('#updatesGrid');
+
+    grid.innerHTML = '';
+
+    list.forEach(
+      (post, index) => {
+
+        const card =
+          postCard(
+            post
+          );
+
+        card.style.setProperty(
+          '--delay',
+          `${Math.min(
+            index,
+            8
+          ) * 50}ms`
+        );
+
+        grid.appendChild(
+          card
+        );
+
+        requestAnimationFrame(
+          () =>
+            card.classList.add(
+              'card-enter'
+            )
+        );
+      }
+    );
+
+    $('#emptyState')
+      .classList.toggle(
+        'hidden',
+        list.length !==
+          0
+      );
+
+    setText(
+      '#resultsMeta',
+      `${list.length} kết quả`
+    );
+
+    $('#clearSearch')
+      .classList.toggle(
+        'hidden',
+        !query &&
+        !activeTag &&
+        activeFilter ===
+          'Tất cả'
+      );
+  }
+
+  function clearFilters() {
+    $('#searchInput')
+      .value = '';
+
+    $('#sortSelect')
+      .value = 'newest';
+
+    activeFilter =
+      'Tất cả';
+
+    activeTag =
+      '';
+
+    const tagSelect =
+      $('#tagSelect');
+
+    if (
+      tagSelect
+    ) {
+      tagSelect.value =
+        '';
+    }
+
+    $('#filters')
+      .querySelectorAll(
+        '.filter'
+      )
+      .forEach(
+        (item) => {
+
+          item.classList.toggle(
+            'active',
+            item.textContent ===
+              'Tất cả'
+          );
+
+        }
+      );
+
+    renderUpdates();
+
+    $('#searchInput')
+      .focus();
   }
 
   function postCard(post) {
-    const element =
+    const card =
       document.createElement(
         'article'
       );
 
-    element.className =
+    card.className =
       'update-card';
 
     const tags =
@@ -468,41 +885,64 @@
         .slice(0, 3)
         .map(
           (tag) =>
-            `<span class="mini-tag">${escapeHtml(
-              tag
-            )}</span>`
+            `
+              <span class="mini-tag">
+                ${escapeHtml(
+                  tag
+                )}
+              </span>
+            `
         )
         .join('');
 
     const priority =
-      post.priority === 'high'
-        ? '<span class="priority">IMPORTANT</span>'
+      post.priority ===
+      'high'
+        ? `
+          <span class="priority">
+            IMPORTANT
+          </span>
+        `
         : '';
 
-    const newBadge =
-      isRecent(post.date)
-        ? '<span class="new-badge">MỚI</span>'
+    const fresh =
+      isRecent(
+        post.date
+      )
+        ? `
+          <span class="new-badge">
+            MỚI
+          </span>
+        `
         : '';
 
-    element.innerHTML = `
+    const type =
+      updateTypeMeta(
+        post.type
+      );
+
+    card.innerHTML = `
       <div class="update-top">
 
         <div class="tag-row">
 
           <span class="tag">
+            ${type.icon}
             ${escapeHtml(
               post.type ||
-                'UPDATE'
+              'UPDATE'
             )}
           </span>
 
           ${priority}
-          ${newBadge}
+          ${fresh}
 
         </div>
 
         <span class="date">
-          ${formatDate(post.date)}
+          ${formatDate(
+            post.date
+          )}
         </span>
 
       </div>
@@ -515,7 +955,8 @@
 
       <p>
         ${escapeHtml(
-          post.summary || ''
+          post.summary ||
+          ''
         )}
       </p>
 
@@ -527,7 +968,8 @@
 
         <span class="version">
           ${escapeHtml(
-            post.version || ''
+            post.version ||
+            ''
           )}
         </span>
 
@@ -541,19 +983,254 @@
       </div>
     `;
 
-    element
-      .querySelector('.read-btn')
-      .onclick = () =>
-        openPost(post, true);
+    card
+      .querySelector(
+        '.read-btn'
+      )
+      .onclick =
+      () =>
+        openPost(
+          post,
+          true
+        );
 
-    return element;
+    return card;
+  }
+
+  function renderTimeline() {
+    const box =
+      $('#timelineList');
+
+    if (!box) {
+      return;
+    }
+
+    box.innerHTML = '';
+
+    visiblePosts.forEach(
+      (post, index) => {
+
+        const item =
+          document.createElement(
+            'article'
+          );
+
+        item.className =
+          'timeline-item reveal reveal-left';
+
+        item.style.setProperty(
+          '--delay',
+          `${Math.min(
+            index,
+            8
+          ) * 60}ms`
+        );
+
+        const type =
+          updateTypeMeta(
+            post.type
+          );
+
+        const priority =
+          post.priority ===
+          'high'
+            ? `
+              <span class="priority">
+                IMPORTANT
+              </span>
+            `
+            : '';
+
+        item.innerHTML = `
+          <div
+            class="timeline-marker"
+            aria-hidden="true"
+          ></div>
+
+          <div class="timeline-date">
+            ${formatDate(
+              post.date
+            )}
+          </div>
+
+          <div class="timeline-card">
+
+            <div class="timeline-card-top">
+
+              <div class="tag-row">
+
+                <span class="tag">
+                  ${type.icon}
+                  ${escapeHtml(
+                    post.type ||
+                    'UPDATE'
+                  )}
+                </span>
+
+                ${priority}
+
+              </div>
+
+              <span class="version">
+                ${escapeHtml(
+                  post.version ||
+                  ''
+                )}
+              </span>
+
+            </div>
+
+            <h3>
+              ${escapeHtml(
+                post.title
+              )}
+            </h3>
+
+            <p>
+              ${escapeHtml(
+                post.summary ||
+                ''
+              )}
+            </p>
+
+            <button
+              type="button"
+              class="read-btn"
+            >
+              Xem thay đổi →
+            </button>
+
+          </div>
+        `;
+
+        item
+          .querySelector(
+            '.read-btn'
+          )
+          .onclick =
+          () =>
+            openPost(
+              post,
+              true
+            );
+
+        box.appendChild(
+          item
+        );
+      }
+    );
+
+    initAnimations(
+      box
+    );
+  }
+
+  function renderFaq() {
+    const box =
+      $('#faqList');
+
+    if (!box) {
+      return;
+    }
+
+    box.innerHTML = '';
+
+    faqs.forEach(
+      (faq, index) => {
+
+        const item =
+          document.createElement(
+            'div'
+          );
+
+        item.className =
+          'faq reveal reveal-up';
+
+        item.style.setProperty(
+          '--delay',
+          `${Math.min(
+            index,
+            8
+          ) * 40}ms`
+        );
+
+        item.innerHTML = `
+          <button
+            type="button"
+            aria-expanded="false"
+          >
+
+            <span>
+              ${escapeHtml(
+                faq.question
+              )}
+            </span>
+
+            <span>
+              ＋
+            </span>
+
+          </button>
+
+          <div class="faq-answer">
+            ${escapeHtml(
+              faq.answer
+            )}
+          </div>
+        `;
+
+        item
+          .querySelector(
+            'button'
+          )
+          .onclick =
+          () => {
+
+            const open =
+              item.classList.toggle(
+                'open'
+              );
+
+            item
+              .querySelector(
+                'button'
+              )
+              .setAttribute(
+                'aria-expanded',
+                String(
+                  open
+                )
+              );
+
+            item
+              .querySelectorAll(
+                'span'
+              )[1]
+              .textContent =
+              open
+                ? '−'
+                : '＋';
+          };
+
+        box.appendChild(
+          item
+        );
+      }
+    );
+
+    initAnimations(
+      box
+    );
   }
 
   function openPost(
     post,
-    updateHash
+    updateHash = true
   ) {
-    if (!post) return;
+
+    if (!post) {
+      return;
+    }
 
     const changes =
       Array.isArray(
@@ -568,14 +1245,20 @@
             </h3>
 
             <ul>
+
               ${post.changes
                 .map(
-                  (item) =>
-                    `<li>${escapeHtml(
-                      item
-                    )}</li>`
+                  (change) =>
+                    `
+                      <li>
+                        ${escapeHtml(
+                          change
+                        )}
+                      </li>
+                    `
                 )
                 .join('')}
+
             </ul>
 
           </div>
@@ -586,9 +1269,13 @@
       (post.tags || [])
         .map(
           (tag) =>
-            `<span class="mini-tag">${escapeHtml(
-              tag
-            )}</span>`
+            `
+              <span class="mini-tag">
+                ${escapeHtml(
+                  tag
+                )}
+              </span>
+            `
         )
         .join('');
 
@@ -599,7 +1286,9 @@
         post.id || ''
       )}`;
 
-    $('#modalContent').innerHTML = `
+    $('#modalContent')
+      .innerHTML = `
+
       <div class="modal-header-row">
 
         <div>
@@ -607,7 +1296,7 @@
           <span class="eyebrow">
             ${escapeHtml(
               post.type ||
-                'UPDATE'
+              'UPDATE'
             )}
           </span>
 
@@ -624,13 +1313,23 @@
           ${
             post.priority ===
             'high'
-              ? '<span class="priority">IMPORTANT</span>'
+              ? `
+                <span class="priority">
+                  IMPORTANT
+                </span>
+              `
               : ''
           }
 
           ${
-            isRecent(post.date)
-              ? '<span class="new-badge">MỚI</span>'
+            isRecent(
+              post.date
+            )
+              ? `
+                <span class="new-badge">
+                  MỚI
+                </span>
+              `
               : ''
           }
 
@@ -640,14 +1339,18 @@
 
       <div class="meta">
 
-        ${formatDate(post.date)}
+        ${formatDate(
+          post.date
+        )}
 
         ${
           post.version
-            ? ' • ' +
-              escapeHtml(
+            ? `
+              •
+              ${escapeHtml(
                 post.version
-              )
+              )}
+            `
             : ''
         }
 
@@ -661,7 +1364,8 @@
 
       <div class="modal-body">
         ${renderMarkdownLite(
-          post.content || ''
+          post.content ||
+          ''
         )}
       </div>
 
@@ -686,8 +1390,10 @@
       </div>
     `;
 
-    $('#copyUpdateLink').onclick =
+    $('#copyUpdateLink')
+      .onclick =
       async () => {
+
         const ok =
           await copyText(
             shareUrl
@@ -695,30 +1401,39 @@
 
         showToast(
           ok
-            ? 'Đã sao chép liên kết'
-            : 'Không thể sao chép liên kết'
+            ? 'Đã sao chép liên kết.'
+            : 'Không thể sao chép liên kết.'
         );
       };
 
-    $('#shareUpdate').onclick =
+    $('#shareUpdate')
+      .onclick =
       async () => {
+
         if (
           navigator.share
         ) {
+
           try {
+
             await navigator.share(
               {
                 title:
                   post.title,
+
                 text:
                   post.summary ||
                   '',
+
                 url:
-                  shareUrl,
+                  shareUrl
               }
             );
+
           } catch (_) {}
+
         } else {
+
           const ok =
             await copyText(
               shareUrl
@@ -726,15 +1441,18 @@
 
           showToast(
             ok
-              ? 'Đã sao chép liên kết để chia sẻ'
-              : 'Không thể chia sẻ'
+              ? 'Đã sao chép liên kết để chia sẻ.'
+              : 'Không thể chia sẻ.'
           );
+
         }
+
       };
 
-    $('#postModal').classList.remove(
-      'hidden'
-    );
+    $('#postModal')
+      .classList.remove(
+        'hidden'
+      );
 
     document.body.style.overflow =
       'hidden';
@@ -743,6 +1461,7 @@
       updateHash &&
       post.id
     ) {
+
       history.replaceState(
         null,
         '',
@@ -754,15 +1473,19 @@
   }
 
   function closePost() {
+    const modal =
+      $('#postModal');
+
     if (
-      $('#postModal').classList.contains(
+      !modal ||
+      modal.classList.contains(
         'hidden'
       )
     ) {
       return;
     }
 
-    $('#postModal').classList.add(
+    modal.classList.add(
       'hidden'
     );
 
@@ -774,6 +1497,7 @@
         '#update='
       )
     ) {
+
       history.replaceState(
         null,
         '',
@@ -788,7 +1512,9 @@
         /^#update=(.+)$/
       );
 
-    if (!match) return;
+    if (!match) {
+      return;
+    }
 
     const id =
       decodeURIComponent(
@@ -796,7 +1522,7 @@
       );
 
     const post =
-      sortedBase.find(
+      visiblePosts.find(
         (item) =>
           item.id === id
       );
@@ -809,88 +1535,283 @@
     }
   }
 
-  function renderFaq() {
-    const box =
-      $('#faqList');
+  function initMenu() {
+    const button =
+      $('#menuBtn');
 
-    box.innerHTML = '';
+    const nav =
+      $('.nav');
 
-    faqs.forEach((faq) => {
-      const element =
-        document.createElement(
-          'div'
-        );
+    if (
+      !button ||
+      !nav
+    ) {
+      return;
+    }
 
-      element.className =
-        'faq';
+    button.addEventListener(
+      'click',
+      () => {
 
-      element.innerHTML = `
-        <button
-          type="button"
-          aria-expanded="false"
-        >
+        const open =
+          nav.classList.toggle(
+            'open'
+          );
 
-          <span>
-            ${escapeHtml(
-              faq.question
-            )}
-          </span>
-
-          <span>＋</span>
-
-        </button>
-
-        <div class="faq-answer">
-          ${escapeHtml(
-            faq.answer
-          )}
-        </div>
-      `;
-
-      element
-        .querySelector(
-          'button'
-        )
-        .onclick = () => {
-          const open =
-            element.classList.toggle(
-              'open'
-            );
-
-          element
-            .querySelector(
-              'button'
-            )
-            .setAttribute(
-              'aria-expanded',
-              String(open)
-            );
-
-          element
-            .querySelectorAll(
-              'span'
-            )[1].textContent =
+        button.setAttribute(
+          'aria-expanded',
+          String(
             open
-              ? '−'
-              : '＋';
-        };
+          )
+        );
+      }
+    );
 
-      box.appendChild(
-        element
+    document
+      .querySelectorAll(
+        '.nav-links a'
+      )
+      .forEach(
+        (link) => {
+
+          link.addEventListener(
+            'click',
+            () => {
+
+              nav.classList.remove(
+                'open'
+              );
+
+              button.setAttribute(
+                'aria-expanded',
+                'false'
+              );
+
+            }
+          );
+
+        }
       );
-    });
   }
 
-  function findImportantPost() {
-    return sortedBase.find(
-      (post) =>
-        post.priority === 'high' &&
-        post.status ===
-          'published'
+  function initModal() {
+    $('#modalClose')
+      .onclick =
+      closePost;
+
+    $('.modal-backdrop')
+      .onclick =
+      closePost;
+  }
+
+  function initKeyboard() {
+    window.addEventListener(
+      'keydown',
+      (event) => {
+
+        if (
+          event.key ===
+          'Escape'
+        ) {
+          closePost();
+        }
+
+        if (
+          event.key ===
+            '/' &&
+          document.activeElement !==
+            $('#searchInput') &&
+          !isTypingTarget(
+            event.target
+          )
+        ) {
+
+          event.preventDefault();
+
+          $('#searchInput')
+            .focus();
+        }
+
+      }
     );
   }
 
-  function priorityScore(post) {
+  function initBackTop() {
+    $('#backTop')
+      .onclick =
+      () => {
+
+        window.scrollTo(
+          {
+            top: 0,
+            behavior:
+              'smooth'
+          }
+        );
+
+      };
+  }
+
+  function initAnimations(
+    root = document
+  ) {
+
+    const items =
+      root.querySelectorAll
+        ? root.querySelectorAll(
+            '.reveal:not(.in-view)'
+          )
+        : [];
+
+    if (
+      !(
+        'IntersectionObserver' in
+        window
+      )
+    ) {
+
+      items.forEach(
+        (item) =>
+          item.classList.add(
+            'in-view'
+          )
+      );
+
+      return;
+    }
+
+    const observer =
+      new IntersectionObserver(
+        (
+          entries,
+          currentObserver
+        ) => {
+
+          entries.forEach(
+            (entry) => {
+
+              if (
+                entry.isIntersecting
+              ) {
+
+                entry.target.classList.add(
+                  'in-view'
+                );
+
+                currentObserver.unobserve(
+                  entry.target
+                );
+
+              }
+
+            }
+          );
+        },
+        {
+          threshold:
+            0.12,
+
+          rootMargin:
+            '0px 0px -40px 0px'
+        }
+      );
+
+    items.forEach(
+      (item) =>
+        observer.observe(
+          item
+        )
+    );
+  }
+
+  function findImportantPost() {
+    return (
+      visiblePosts.find(
+        (post) =>
+          post.priority ===
+          'high'
+      ) ||
+      null
+    );
+  }
+
+  function updateTypeMeta(
+    type
+  ) {
+
+    const map = {
+
+      FEATURE: {
+        icon: '✨'
+      },
+
+      IMPROVEMENT: {
+        icon: '🔧'
+      },
+
+      FIX: {
+        icon: '🐛'
+      },
+
+      RELEASE: {
+        icon: '🚀'
+      },
+
+      SECURITY: {
+        icon: '🛡️'
+      },
+
+      ANNOUNCEMENT: {
+        icon: '📢'
+      }
+
+    };
+
+    return (
+      map[type] || {
+        icon: '•'
+      }
+    );
+  }
+
+  function noticeIcon(
+    type
+  ) {
+
+    const map = {
+
+      WARNING:
+        '⚠️',
+
+      INFO:
+        'ℹ️',
+
+      SUCCESS:
+        '✓',
+
+      SECURITY:
+        '🛡️',
+
+      MAINTENANCE:
+        '🔧'
+
+    };
+
+    return (
+      map[
+        String(
+          type ||
+          ''
+        ).toUpperCase()
+      ] ||
+      '📢'
+    );
+  }
+
+  function priorityScore(
+    post
+  ) {
+
     if (
       post.priority ===
       'high'
@@ -908,19 +1829,31 @@
     return 0;
   }
 
-  function dateValue(date) {
-    const value =
-      new Date(date).getTime();
+  function dateValue(
+    date
+  ) {
 
-    return Number.isNaN(value)
+    const value =
+      new Date(
+        date
+      ).getTime();
+
+    return Number.isNaN(
+      value
+    )
       ? 0
       : value;
   }
 
-  function isRecent(date) {
+  function isRecent(
+    date
+  ) {
+
     const diff =
       Date.now() -
-      dateValue(date);
+      dateValue(
+        date
+      );
 
     return (
       diff >= 0 &&
@@ -933,9 +1866,14 @@
     );
   }
 
-  function formatDate(date) {
+  function formatDate(
+    date
+  ) {
+
     const value =
-      new Date(date);
+      new Date(
+        date
+      );
 
     if (
       Number.isNaN(
@@ -943,31 +1881,43 @@
       )
     ) {
       return String(
-        date || ''
+        date ||
+        ''
       );
     }
 
     return new Intl.DateTimeFormat(
       'vi-VN',
       {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
+        day:
+          '2-digit',
+
+        month:
+          '2-digit',
+
+        year:
+          'numeric'
       }
-    ).format(value);
+    ).format(
+      value
+    );
   }
 
   function setText(
     selector,
     value
   ) {
+
     const element =
-      $(selector);
+      $(
+        selector
+      );
 
     if (element) {
       element.textContent =
         String(
-          value ?? ''
+          value ??
+          ''
         );
     }
   }
@@ -976,66 +1926,181 @@
     selector,
     value
   ) {
+
     const element =
-      $(selector);
+      $(
+        selector
+      );
 
     if (element) {
       element.href =
-        value || '#';
+        value ||
+        '#';
     }
   }
 
-  function escapeHtml(value) {
+  function escapeHtml(
+    value
+  ) {
+
     return String(
-      value ?? ''
+      value ??
+      ''
     ).replace(
       /[&<>'"]/g,
-      (char) => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        "'": '&#39;',
-        '"': '&quot;',
-      })[char]
+      (char) =>
+        ({
+          '&':
+            '&amp;',
+
+          '<':
+            '&lt;',
+
+          '>':
+            '&gt;',
+
+          "'":
+            '&#39;',
+
+          '"':
+            '&quot;'
+        })[char]
     );
   }
 
-  function escapeAttr(value) {
-    return escapeHtml(value);
+  function escapeAttr(
+    value
+  ) {
+    return escapeHtml(
+      value
+    );
   }
 
   function renderMarkdownLite(
     text
   ) {
-    return text
-      .split('\n')
-      .map((line) => {
 
-        if (
-          /^### /.test(
-            line
+    const lines =
+      String(
+        text ||
+        ''
+      ).split(
+        '\n'
+      );
+
+    let html =
+      '';
+
+    let inCode =
+      false;
+
+    let codeBuffer =
+      [];
+
+    for (
+      const line
+      of lines
+    ) {
+
+      if (
+        line
+          .trim()
+          .startsWith(
+            '```'
           )
-        ) {
-          return `<h3>${escapeHtml(
-            line.slice(4)
-          )}</h3>`;
-        }
+      ) {
 
         if (
-          /^- /.test(
-            line
-          )
+          !inCode
         ) {
-          return `<p>• ${escapeHtml(
-            line.slice(2)
-          )}</p>`;
+
+          inCode =
+            true;
+
+          codeBuffer =
+            [];
+
+        } else {
+
+          html +=
+            `
+              <pre>
+                <code>
+${escapeHtml(
+  codeBuffer.join(
+    '\n'
+  )
+)}
+                </code>
+              </pre>
+            `;
+
+          inCode =
+            false;
+
+          codeBuffer =
+            [];
         }
 
-        if (
-          !line.trim()
-        ) {
-          return '<br>';
-        }
+        continue;
+      }
+
+      if (
+        inCode
+      ) {
+
+        codeBuffer.push(
+          line
+        );
+
+        continue;
+      }
+
+      if (
+        /^### /.test(
+          line
+        )
+      ) {
+
+        html +=
+          `
+            <h3>
+              ${escapeHtml(
+                line.slice(
+                  4
+                )
+              )}
+            </h3>
+          `;
+
+      } else if (
+        /^- /.test(
+          line
+        )
+      ) {
+
+        html +=
+          `
+            <p class="markdown-list">
+              •
+              ${escapeHtml(
+                line.slice(
+                  2
+                )
+              )}
+            </p>
+          `;
+
+      } else if (
+        !line.trim()
+      ) {
+
+        html +=
+          `
+            <div class="markdown-gap"></div>
+          `;
+
+      } else {
 
         const safe =
           escapeHtml(
@@ -1045,41 +2110,84 @@
             '<code>$1</code>'
           );
 
-        return `<p>${safe}</p>`;
-      })
-      .join('');
+        html +=
+          `
+            <p>
+              ${safe}
+            </p>
+          `;
+      }
+    }
+
+    if (
+      inCode &&
+      codeBuffer.length
+    ) {
+
+      html +=
+        `
+          <pre>
+            <code>
+${escapeHtml(
+  codeBuffer.join(
+    '\n'
+  )
+)}
+            </code>
+          </pre>
+        `;
+    }
+
+    return html;
   }
 
   async function copyText(
-    text
+    value
   ) {
+
     try {
+
       await navigator
         .clipboard
-        .writeText(text);
+        .writeText(
+          value
+        );
 
       return true;
+
     } catch (_) {
-      const input =
+
+      const area =
         document.createElement(
           'textarea'
         );
 
-      input.value =
-        text;
+      area.value =
+        value;
 
-      document.body.appendChild(
-        input
+      area.setAttribute(
+        'readonly',
+        ''
       );
 
-      input.select();
+      area.style.position =
+        'fixed';
+
+      area.style.opacity =
+        '0';
+
+      document.body.appendChild(
+        area
+      );
+
+      area.select();
 
       const ok =
         document.execCommand(
           'copy'
         );
 
-      input.remove();
+      area.remove();
 
       return ok;
     }
@@ -1088,24 +2196,12 @@
   function showToast(
     message
   ) {
-    let toast =
+
+    const toast =
       $('#siteToast');
 
     if (!toast) {
-      toast =
-        document.createElement(
-          'div'
-        );
-
-      toast.id =
-        'siteToast';
-
-      toast.className =
-        'site-toast';
-
-      document.body.appendChild(
-        toast
-      );
+      return;
     }
 
     toast.textContent =
@@ -1132,15 +2228,17 @@
   function isTypingTarget(
     target
   ) {
+
     return (
       target &&
       [
         'INPUT',
         'TEXTAREA',
-        'SELECT',
+        'SELECT'
       ].includes(
         target.tagName
       )
     );
   }
+
 })();
