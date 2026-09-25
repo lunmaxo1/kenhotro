@@ -1,7 +1,7 @@
 (() => {
   const cfg = window.SITE_CONFIG || {};
   const posts = Array.isArray(window.UPDATE_POSTS) ? window.UPDATE_POSTS : [];
-  const faqs = Array.isArray(cfg.faq) ? cfg.faq : {};
+  const faqs = Array.isArray(cfg.faq) ? cfg.faq : [];
 
   const $ = (s) => document.querySelector(s);
 
