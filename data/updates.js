@@ -1,5 +1,87 @@
 window.UPDATE_POSTS = [
   {
+  id: 'update-2026-09-25-220',
+  title: 'KenThongBao cập nhật hệ thống thông báo',
+  version: 'v2.2.0',
+  date: '2026-09-25',
+  type: 'FEATURE',
+  status: 'published',
+  priority: 'high',
+
+  tags: [
+    'KenThongBao',
+    'Update Center',
+    'Search',
+    'SEO',
+    'UI'
+  ],
+
+  summary:
+    'Nâng cấp hệ thống thông báo với tìm kiếm, bộ lọc, sắp xếp, liên kết riêng và nhiều cải tiến cho trải nghiệm sử dụng.',
+
+  changes: [
+    'Bổ sung tìm kiếm thông báo.',
+    'Bổ sung lọc theo loại cập nhật.',
+    'Bổ sung lọc theo chủ đề và tag.',
+    'Bổ sung sắp xếp mới nhất, cũ nhất và quan trọng.',
+    'Bổ sung liên kết riêng cho từng thông báo.',
+    'Bổ sung nút sao chép liên kết thông báo.',
+    'Bổ sung chức năng chia sẻ thông báo trên thiết bị hỗ trợ.',
+    'Bổ sung nút quay lại đầu trang.',
+    'Cải thiện giao diện trên điện thoại.',
+    'Bổ sung trang 404.',
+    'Bổ sung robots.txt và sitemap.xml.',
+    'Cải thiện SEO và thông tin Open Graph.',
+    'Tối ưu cấu trúc dữ liệu cho các bản cập nhật.'
+  ],
+
+  content: `
+### Có gì mới?
+
+KenThongBao đã được nâng cấp hệ thống Update Center để việc theo dõi các bản cập nhật dễ dàng hơn.
+
+### Tìm kiếm và lọc
+
+- Tìm kiếm theo tiêu đề.
+- Tìm kiếm theo nội dung.
+- Tìm kiếm theo phiên bản.
+- Tìm kiếm theo tag.
+- Lọc theo loại cập nhật.
+- Lọc theo chủ đề.
+
+### Sắp xếp
+
+Có thể sắp xếp thông báo theo:
+
+- Mới nhất.
+- Cũ nhất.
+- Quan trọng.
+
+### Liên kết thông báo
+
+Mỗi thông báo hiện có ID riêng để tạo liên kết trực tiếp.
+
+Có thể sao chép liên kết hoặc chia sẻ trực tiếp từ cửa sổ thông báo.
+
+### SEO và website
+
+- Bổ sung thông tin SEO cơ bản.
+- Bổ sung Open Graph.
+- Bổ sung canonical URL.
+- Bổ sung robots.txt.
+- Bổ sung sitemap.xml.
+- Bổ sung trang 404.
+
+### Giao diện
+
+Tiếp tục tối ưu giao diện cho cả máy tính và điện thoại.
+
+### Ghi chú
+
+Đây là bản cập nhật tập trung vào hệ thống thông báo, tìm kiếm và trải nghiệm sử dụng của KenThongBao.
+  `.trim()
+},
+  {
     id: 'update-2026-09-25-210',
     title: 'KenThongBao 2.1.0 chính thức cập nhật',
     version: 'v2.1.0',
