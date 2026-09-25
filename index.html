@@ -4,10 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#5865F2" />
-  <meta name="description" content="Trang hỗ trợ và cập nhật dự án Discord." />
-  <title>Discord Support Center</title>
+  <meta name="description" content="KenThongBao — trung tâm thông báo, cập nhật phiên bản và thông tin hỗ trợ." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="KenThongBao" />
+  <meta property="og:description" content="Thông báo nhanh. Cập nhật rõ ràng." />
+  <link rel="canonical" href="https://kenhotro.pages.dev/" />
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="assets/style.css" />
+  <title>KenThongBao</title>
 </head>
 <body>
   <div class="bg-glow glow-1"></div>
@@ -15,31 +19,31 @@
 
   <header class="topbar">
     <div class="container nav">
-      <a class="brand" href="#top" aria-label="Discord Support Center">
-        <span class="brand-icon">D</span>
+      <a class="brand" href="#top" aria-label="KenThongBao">
+        <span class="brand-icon">KT</span>
         <span>
-          <strong>Discord Support</strong>
-          <small>Update Center</small>
+          <strong id="brandName">KenThongBao</strong>
+          <small>Thông báo & cập nhật</small>
         </span>
       </a>
-      <nav class="nav-links">
-        <a href="#updates">Updates</a>
+      <nav class="nav-links" aria-label="Điều hướng chính">
+        <a href="#updates">Thông báo</a>
         <a href="#support">Hỗ trợ</a>
         <a href="#faq">FAQ</a>
         <a class="nav-btn" id="discordLink" href="#" target="_blank" rel="noopener">Discord</a>
       </nav>
-      <button class="menu-btn" id="menuBtn" aria-label="Mở menu">☰</button>
+      <button class="menu-btn" id="menuBtn" aria-label="Mở menu" aria-expanded="false">☰</button>
     </div>
   </header>
 
   <main id="top">
     <section class="hero container">
       <div class="hero-copy">
-        <span class="eyebrow">● SYSTEM ONLINE</span>
-        <h1>Hỗ trợ nhanh.<br><span>Update rõ ràng.</span></h1>
-        <p>Trang thông báo dành cho dự án Discord của bạn — đăng bản cập nhật, ghi chú phiên bản và hướng dẫn xử lý lỗi trong một giao diện duy nhất.</p>
+        <span class="eyebrow">● <span id="heroStatus">SYSTEM ONLINE</span></span>
+        <h1>Thông báo nhanh.<br><span>Cập nhật rõ ràng.</span></h1>
+        <p>KenThongBao tập trung các thông báo, phiên bản mới, thay đổi quan trọng và hướng dẫn cần thiết trong một nơi duy nhất.</p>
         <div class="hero-actions">
-          <a class="btn primary" href="#updates">Xem cập nhật</a>
+          <a class="btn primary" href="#updates">Xem thông báo</a>
           <a class="btn secondary" href="#support">Trung tâm hỗ trợ</a>
         </div>
         <div class="hero-meta">
@@ -50,13 +54,13 @@
       </div>
 
       <div class="hero-card">
-        <div class="terminal-top"><span></span><span></span><span></span><b>status.log</b></div>
+        <div class="terminal-top"><span></span><span></span><span></span><b>notification.log</b></div>
         <div class="terminal-body">
           <p><i>$</i> system status</p>
-          <p class="ok">✓ Discord services ...... ONLINE</p>
-          <p class="ok">✓ Support center ........ ONLINE</p>
-          <p>› Latest update ......... <span id="latestVersion">v2.1.0</span></p>
-          <p>› Response mode ......... FAST</p>
+          <p class="ok">✓ Website ............... ONLINE</p>
+          <p class="ok">✓ Notification center ... READY</p>
+          <p>› Latest update ......... <span id="latestVersion">latest</span></p>
+          <p>› Latest type ........... <span id="latestType">UPDATE</span></p>
           <p class="cursor">_</p>
         </div>
       </div>
@@ -64,27 +68,31 @@
 
     <section class="stats container">
       <div class="stat-card"><span>UPDATES</span><strong id="statUpdates">0</strong><small>Bài đăng</small></div>
-      <div class="stat-card"><span>TOPIC</span><strong id="statTopics">0</strong><small>Chủ đề hỗ trợ</small></div>
-      <div class="stat-card"><span>STATUS</span><strong>ONLINE</strong><small>Website</small></div>
-      <div class="stat-card"><span>TYPE</span><strong>STATIC</strong><small>Cloudflare Pages</small></div>
+      <div class="stat-card"><span>TAGS</span><strong id="statTopics">0</strong><small>Chủ đề</small></div>
+      <div class="stat-card"><span>LATEST</span><strong id="statVersion">—</strong><small>Phiên bản</small></div>
+      <div class="stat-card"><span>STATUS</span><strong>ONLINE</strong><small id="statStatus">Hệ thống</small></div>
     </section>
 
     <section class="section container" id="updates">
       <div class="section-head">
         <div>
-          <span class="eyebrow">UPDATE CENTER</span>
+          <span class="eyebrow">NOTIFICATION CENTER</span>
           <h2>Thông báo & cập nhật</h2>
         </div>
         <span class="section-note">Mới nhất → cũ nhất</span>
       </div>
+
+      <div id="featuredUpdate" class="featured hidden"></div>
+
       <div class="toolbar">
-        <div class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Tìm update, tính năng, lỗi..." /></div>
+        <div class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Tìm thông báo, tính năng, lỗi..." /></div>
         <div class="filters" id="filters"></div>
       </div>
+
       <div id="updatesGrid" class="updates-grid"></div>
       <div id="emptyState" class="empty hidden">
         <div class="empty-icon">⌕</div>
-        <h3>Không tìm thấy bài viết</h3>
+        <h3>Không tìm thấy thông báo</h3>
         <p>Thử từ khóa khác hoặc đổi bộ lọc.</p>
       </div>
     </section>
@@ -100,17 +108,17 @@
         <div class="support-grid">
           <a class="support-card" href="#faq">
             <span class="support-icon">?</span>
-            <div><h3>FAQ</h3><p>Câu hỏi thường gặp về bot và server Discord.</p></div>
-            <span class="arrow">→</span>
-          </a>
-          <a class="support-card" href="#contact">
-            <span class="support-icon">!</span>
-            <div><h3>Báo lỗi</h3><p>Gửi thông tin lỗi để kiểm tra nhanh hơn.</p></div>
+            <div><h3>FAQ</h3><p>Xem nhanh các câu hỏi thường gặp.</p></div>
             <span class="arrow">→</span>
           </a>
           <a class="support-card" id="inviteCard" href="#" target="_blank" rel="noopener">
-            <span class="support-icon">⌁</span>
-            <div><h3>Tham gia Discord</h3><p>Vào server để nhận thông báo và hỗ trợ.</p></div>
+            <span class="support-icon">↗</span>
+            <div><h3>Tham gia Discord</h3><p>Nhận thông báo và hỗ trợ trực tiếp.</p></div>
+            <span class="arrow">→</span>
+          </a>
+          <a class="support-card" id="contactCard" href="#" target="_blank" rel="noopener">
+            <span class="support-icon">!</span>
+            <div><h3>Báo lỗi / liên hệ</h3><p>Mở kênh hỗ trợ để gửi vấn đề cần kiểm tra.</p></div>
             <span class="arrow">→</span>
           </a>
         </div>
@@ -131,8 +139,8 @@
       <div class="contact-box">
         <div>
           <span class="eyebrow">NEED HELP?</span>
-          <h2>Chưa tìm thấy câu trả lời?</h2>
-          <p>Đưa người dùng về kênh hỗ trợ Discord của bạn hoặc một biểu mẫu báo lỗi.</p>
+          <h2>Không tìm thấy thông tin?</h2>
+          <p>Mở kênh hỗ trợ để gửi câu hỏi, lỗi hoặc yêu cầu cần kiểm tra.</p>
         </div>
         <a class="btn primary" id="contactBtn" href="#" target="_blank" rel="noopener">Mở kênh hỗ trợ</a>
       </div>
@@ -141,10 +149,10 @@
 
   <footer class="footer">
     <div class="container footer-inner">
-      <div><strong id="footerName">Discord Support Center</strong><p>Made for Discord projects.</p></div>
-      <div class="footer-links"><a href="#updates">Updates</a><a href="#support">Support</a><a href="#faq">FAQ</a></div>
+      <div><strong id="footerName">KenThongBao</strong><p id="footerDesc">Thông báo & cập nhật.</p></div>
+      <div class="footer-links"><a href="#updates">Thông báo</a><a href="#support">Hỗ trợ</a><a href="#faq">FAQ</a></div>
     </div>
-    <div class="container copyright">© <span id="year"></span> <span id="copyrightName">Discord Support</span>. All rights reserved.</div>
+    <div class="container copyright">© <span id="year"></span> <span id="copyrightName">KenThongBao</span>. All rights reserved.</div>
   </footer>
 
   <div class="modal hidden" id="postModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
