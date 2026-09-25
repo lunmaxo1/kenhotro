@@ -7,47 +7,98 @@
 
   <meta
     name="description"
-    content="KenThongBao — thông báo, cập nhật phiên bản và thông tin quan trọng."
+    content="KenThongBao — thông báo nhanh, cập nhật rõ ràng."
   />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="KenThongBao" />
   <meta
     property="og:description"
-    content="KenThongBao — thông báo, cập nhật phiên bản và thông tin quan trọng."
+    content="Thông báo nhanh. Cập nhật rõ ràng."
   />
   <meta property="og:url" content="https://kenhotro.pages.dev/" />
   <meta property="og:site_name" content="KenThongBao" />
 
   <meta name="twitter:card" content="summary" />
 
-  <link rel="canonical" href="https://kenhotro.pages.dev/" />
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="./assets/style.css" />
+  <link
+    rel="canonical"
+    href="https://kenhotro.pages.dev/"
+  />
+
+  <link
+    rel="icon"
+    href="./assets/favicon.svg"
+    type="image/svg+xml"
+  />
+
+  <link
+    rel="stylesheet"
+    href="./assets/style.css"
+  />
 
   <title>KenThongBao</title>
 </head>
 
 <body>
+
   <div class="bg-glow glow-1"></div>
   <div class="bg-glow glow-2"></div>
+  <div class="noise"></div>
+
+  <div
+    id="maintenanceBar"
+    class="maintenance-bar hidden"
+    role="status"
+    aria-live="polite"
+  ></div>
 
   <header class="topbar">
+
     <div class="container nav">
 
-      <a class="brand" href="#top" aria-label="KenThongBao">
-        <span class="brand-icon">KT</span>
+      <a
+        class="brand"
+        href="#top"
+        aria-label="KenThongBao"
+      >
+
+        <span class="brand-icon">
+          KT
+        </span>
 
         <span>
-          <strong id="brandName">KenThongBao</strong>
-          <small>Thông báo & cập nhật</small>
+          <strong id="brandName">
+            KenThongBao
+          </strong>
+
+          <small>
+            Thông báo & cập nhật
+          </small>
         </span>
+
       </a>
 
-      <nav class="nav-links" aria-label="Điều hướng chính">
-        <a href="#updates">Thông báo</a>
-        <a href="#support">Hỗ trợ</a>
-        <a href="#faq">FAQ</a>
+      <nav
+        class="nav-links"
+        aria-label="Điều hướng chính"
+      >
+
+        <a href="#updates">
+          Thông báo
+        </a>
+
+        <a href="#timeline">
+          Timeline
+        </a>
+
+        <a href="#support">
+          Hỗ trợ
+        </a>
+
+        <a href="#faq">
+          FAQ
+        </a>
 
         <a
           class="nav-btn"
@@ -58,11 +109,13 @@
         >
           Discord
         </a>
+
       </nav>
 
       <button
         class="menu-btn"
         id="menuBtn"
+        type="button"
         aria-label="Mở menu"
         aria-expanded="false"
       >
@@ -70,43 +123,63 @@
       </button>
 
     </div>
+
   </header>
 
   <main id="top">
 
-    <section class="hero container">
+    <section
+      class="hero container reveal reveal-up"
+    >
 
       <div class="hero-copy">
 
         <span class="eyebrow">
-          ● <span id="heroStatus">SYSTEM ONLINE</span>
+          ●
+          <span id="heroStatus">
+            SYSTEM ONLINE
+          </span>
         </span>
 
         <h1>
           Thông báo nhanh.<br />
-          <span>Cập nhật rõ ràng.</span>
+          <span>
+            Cập nhật rõ ràng.
+          </span>
         </h1>
 
         <p>
-          KenThongBao tập trung các thông báo, phiên bản mới,
-          thay đổi quan trọng và hướng dẫn cần thiết trong một nơi duy nhất.
+          KenThongBao tập trung các thông báo,
+          phiên bản mới, thay đổi quan trọng
+          và hướng dẫn cần thiết trong một nơi
+          duy nhất.
         </p>
 
         <div class="hero-actions">
 
-          <a class="btn primary" href="#updates">
+          <a
+            class="btn primary"
+            href="#updates"
+          >
             Xem thông báo
           </a>
 
-          <a class="btn secondary" href="#support">
+          <a
+            class="btn secondary"
+            href="#support"
+          >
             Trung tâm hỗ trợ
           </a>
 
         </div>
 
         <div class="hero-meta">
+
           <span>
-            <b id="updateCount">0</b> bài cập nhật
+            <b id="updateCount">
+              0
+            </b>
+            bài cập nhật
           </span>
 
           <span>•</span>
@@ -114,41 +187,56 @@
           <span id="lastUpdated">
             Đang tải...
           </span>
+
         </div>
 
       </div>
 
-      <div class="hero-card">
+      <div class="hero-card floating">
 
         <div class="terminal-top">
+
           <span></span>
           <span></span>
           <span></span>
-          <b>notification.log</b>
+
+          <b>
+            notification.log
+          </b>
+
         </div>
 
         <div class="terminal-body">
 
           <p>
-            <i>$</i> system status
+            <i>$</i>
+            system status
           </p>
 
           <p class="ok">
-            ✓ Website ............... ONLINE
+            ✓ Website ...............
+            <span id="systemState">
+              ONLINE
+            </span>
           </p>
 
           <p class="ok">
-            ✓ Notification center ... READY
+            ✓ Notification center ...
+            READY
           </p>
 
           <p>
-            › Latest update ......... 
-            <span id="latestVersion">latest</span>
+            › Latest update .........
+            <span id="latestVersion">
+              latest
+            </span>
           </p>
 
           <p>
             › Latest type ...........
-            <span id="latestType">UPDATE</span>
+            <span id="latestType">
+              UPDATE
+            </span>
           </p>
 
           <p class="cursor">
@@ -156,45 +244,105 @@
           </p>
 
         </div>
+
       </div>
 
     </section>
 
-    <section class="stats container">
+    <section
+      class="stats container reveal reveal-up"
+    >
 
       <div class="stat-card">
-        <span>UPDATES</span>
-        <strong id="statUpdates">0</strong>
-        <small>Bài đăng</small>
+
+        <span>
+          UPDATES
+        </span>
+
+        <strong id="statUpdates">
+          0
+        </strong>
+
+        <small>
+          Bài đăng
+        </small>
+
       </div>
 
       <div class="stat-card">
-        <span>TAGS</span>
-        <strong id="statTopics">0</strong>
-        <small>Chủ đề</small>
+
+        <span>
+          TAGS
+        </span>
+
+        <strong id="statTopics">
+          0
+        </strong>
+
+        <small>
+          Chủ đề
+        </small>
+
       </div>
 
       <div class="stat-card">
-        <span>LATEST</span>
-        <strong id="statVersion">—</strong>
-        <small>Phiên bản</small>
+
+        <span>
+          LATEST
+        </span>
+
+        <strong id="statVersion">
+          —
+        </strong>
+
+        <small>
+          Phiên bản
+        </small>
+
       </div>
 
       <div class="stat-card">
-        <span>STATUS</span>
-        <strong>ONLINE</strong>
-        <small id="statStatus">Hệ thống</small>
+
+        <span>
+          STATUS
+        </span>
+
+        <strong id="statStatusValue">
+          ONLINE
+        </strong>
+
+        <small id="statStatus">
+          Hệ thống
+        </small>
+
       </div>
 
     </section>
 
-    <section class="section container" id="updates">
+    <section
+      id="importantNotice"
+      class="container hidden"
+    ></section>
 
-      <div class="section-head">
+    <section
+      class="section container"
+      id="updates"
+    >
+
+      <div
+        class="section-head reveal reveal-up"
+      >
 
         <div>
-          <span class="eyebrow">NOTIFICATION CENTER</span>
-          <h2>Thông báo & cập nhật</h2>
+
+          <span class="eyebrow">
+            NOTIFICATION CENTER
+          </span>
+
+          <h2>
+            Thông báo & cập nhật
+          </h2>
+
         </div>
 
         <span class="section-note">
@@ -203,13 +351,20 @@
 
       </div>
 
-      <div id="featuredUpdate" class="featured hidden"></div>
+      <div
+        id="featuredUpdate"
+        class="featured hidden reveal reveal-up"
+      ></div>
 
-      <div class="toolbar">
+      <div
+        class="toolbar reveal reveal-up"
+      >
 
         <div class="search-box">
 
-          <span>⌕</span>
+          <span>
+            ⌕
+          </span>
 
           <input
             id="searchInput"
@@ -225,12 +380,25 @@
           id="sortSelect"
           aria-label="Sắp xếp thông báo"
         >
-          <option value="newest">Mới nhất</option>
-          <option value="oldest">Cũ nhất</option>
-          <option value="important">Quan trọng</option>
+
+          <option value="newest">
+            Mới nhất
+          </option>
+
+          <option value="oldest">
+            Cũ nhất
+          </option>
+
+          <option value="important">
+            Quan trọng
+          </option>
+
         </select>
 
-        <div class="filters" id="filters"></div>
+        <div
+          class="filters"
+          id="filters"
+        ></div>
 
       </div>
 
@@ -245,14 +413,20 @@
           class="clear-search hidden"
           id="clearSearch"
         >
-          Xóa tìm kiếm
+          Xóa bộ lọc
         </button>
 
       </div>
 
-      <div id="updatesGrid" class="updates-grid"></div>
+      <div
+        id="updatesGrid"
+        class="updates-grid"
+      ></div>
 
-      <div id="emptyState" class="empty hidden">
+      <div
+        id="emptyState"
+        class="empty hidden"
+      >
 
         <div class="empty-icon">
           ⌕
@@ -271,77 +445,154 @@
     </section>
 
     <section
+      class="section timeline-section"
+      id="timeline"
+    >
+
+      <div class="container">
+
+        <div
+          class="section-head reveal reveal-up"
+        >
+
+          <div>
+
+            <span class="eyebrow">
+              CHANGELOG TIMELINE
+            </span>
+
+            <h2>
+              Lịch sử cập nhật
+            </h2>
+
+          </div>
+
+          <span class="section-note">
+            Theo thời gian phát hành
+          </span>
+
+        </div>
+
+        <div
+          id="timelineList"
+          class="timeline"
+        ></div>
+
+      </div>
+
+    </section>
+
+    <section
       class="section support-section"
       id="support"
     >
 
       <div class="container">
 
-        <div class="section-head">
+        <div
+          class="section-head reveal reveal-up"
+        >
 
           <div>
-            <span class="eyebrow">SUPPORT</span>
-            <h2>Trung tâm hỗ trợ</h2>
+
+            <span class="eyebrow">
+              SUPPORT
+            </span>
+
+            <h2>
+              Trung tâm hỗ trợ
+            </h2>
+
           </div>
 
         </div>
 
         <div class="support-grid">
 
-          <a class="support-card" href="#faq">
+          <a
+            class="support-card reveal reveal-up"
+            href="#faq"
+          >
 
-            <span class="support-icon">?</span>
+            <span class="support-icon">
+              ?
+            </span>
 
             <div>
-              <h3>FAQ</h3>
+
+              <h3>
+                FAQ
+              </h3>
+
               <p>
                 Xem nhanh các câu hỏi thường gặp.
               </p>
+
             </div>
 
-            <span class="arrow">→</span>
+            <span class="arrow">
+              →
+            </span>
 
           </a>
 
           <a
-            class="support-card"
+            class="support-card reveal reveal-up"
             id="inviteCard"
             href="#"
             target="_blank"
             rel="noopener"
           >
 
-            <span class="support-icon">↗</span>
+            <span class="support-icon">
+              ↗
+            </span>
 
             <div>
-              <h3>Tham gia Discord</h3>
+
+              <h3>
+                Tham gia Discord
+              </h3>
+
               <p>
                 Nhận thông báo và hỗ trợ trực tiếp.
               </p>
+
             </div>
 
-            <span class="arrow">→</span>
+            <span class="arrow">
+              →
+            </span>
 
           </a>
 
           <a
-            class="support-card"
+            class="support-card reveal reveal-up"
             id="contactCard"
             href="#"
             target="_blank"
             rel="noopener"
           >
 
-            <span class="support-icon">!</span>
+            <span class="support-icon">
+              !
+            </span>
 
             <div>
-              <h3>Báo lỗi / liên hệ</h3>
+
+              <h3>
+                Báo lỗi / liên hệ
+              </h3>
+
               <p>
                 Mở kênh hỗ trợ để gửi vấn đề cần kiểm tra.
               </p>
+
             </div>
 
-            <span class="arrow">→</span>
+            <span class="arrow">
+              →
+            </span>
 
           </a>
 
@@ -356,16 +607,28 @@
       id="faq"
     >
 
-      <div class="section-head">
+      <div
+        class="section-head reveal reveal-up"
+      >
 
         <div>
-          <span class="eyebrow">FAQ</span>
-          <h2>Câu hỏi thường gặp</h2>
+
+          <span class="eyebrow">
+            FAQ
+          </span>
+
+          <h2>
+            Câu hỏi thường gặp
+          </h2>
+
         </div>
 
       </div>
 
-      <div id="faqList" class="faq-list"></div>
+      <div
+        id="faqList"
+        class="faq-list"
+      ></div>
 
     </section>
 
@@ -374,7 +637,9 @@
       id="contact"
     >
 
-      <div class="contact-box">
+      <div
+        class="contact-box reveal reveal-up"
+      >
 
         <div>
 
@@ -420,7 +685,7 @@
         </strong>
 
         <p id="footerDesc">
-          Thông báo & cập nhật.
+          Thông báo nhanh. Cập nhật rõ ràng.
         </p>
 
       </div>
@@ -431,6 +696,10 @@
           Thông báo
         </a>
 
+        <a href="#timeline">
+          Timeline
+        </a>
+
         <a href="#support">
           Hỗ trợ
         </a>
@@ -439,7 +708,10 @@
           FAQ
         </a>
 
-        <button type="button" id="backTop">
+        <button
+          type="button"
+          id="backTop"
+        >
           Lên đầu ↑
         </button>
 
@@ -449,10 +721,13 @@
 
     <div class="container copyright">
 
-      © <span id="year"></span>
+      ©
+      <span id="year"></span>
+
       <span id="copyrightName">
         KenThongBao
       </span>.
+
       All rights reserved.
 
     </div>
@@ -467,26 +742,33 @@
     aria-labelledby="modalTitle"
   >
 
-    <div
-      class="modal-backdrop"
-      data-close="1"
-    ></div>
+    <div class="modal-backdrop"></div>
 
     <article class="modal-card">
 
       <button
         class="modal-close"
         id="modalClose"
+        type="button"
         aria-label="Đóng"
       >
         ×
       </button>
 
-      <div id="modalContent"></div>
+      <div
+        id="modalContent"
+      ></div>
 
     </article>
 
   </div>
+
+  <div
+    id="siteToast"
+    class="site-toast"
+    role="status"
+    aria-live="polite"
+  ></div>
 
   <script src="./data/config.js"></script>
   <script src="./data/updates.js"></script>
